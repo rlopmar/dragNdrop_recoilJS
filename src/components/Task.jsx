@@ -1,5 +1,8 @@
 import styled from "styled-components";
 import { Draggable } from "react-beautiful-dnd";
+import { useRecoilValue } from "recoil";
+
+import { taskState } from "../globalState";
 
 const StyledTask = styled.div`
   border: 1px solid ${(props) => (props.isDragging ? "red" : "black")};
@@ -10,8 +13,10 @@ const StyledTask = styled.div`
 `;
 
 export default function Task(props) {
+  const task = useRecoilValue(taskState(props.id));
+
   return (
-    <Draggable draggableId={props.task.id} index={props.index}>
+    <Draggable draggableId={task.id} index={props.index}>
       {(provided, snapshot) => {
         return (
           <StyledTask
@@ -20,7 +25,7 @@ export default function Task(props) {
             ref={provided.innerRef}
             isDragging={snapshot.isDragging}
           >
-            {props.task.content}
+            {task.content}
           </StyledTask>
         );
       }}
