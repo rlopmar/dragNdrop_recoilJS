@@ -1,15 +1,15 @@
 import styled from "styled-components";
 import { DragDropContext } from "react-beautiful-dnd";
-import { useRecoilState, useRecoilValue, useRecoilCallback } from "recoil";
+import { useRecoilValue, useRecoilCallback } from "recoil";
 
-import { columnIdsState, columnState, taskState } from "../globalState";
+import { columnIdsState, columnState } from "../globalState";
 import { Column } from "../components";
 
 const StyledContainer = styled.div`
   padding: 10px;
 `;
 
-export default function Canvas(props) {
+export default function Canvas() {
   const columnIds = useRecoilValue(columnIdsState);
 
   const updateDraggedItems = useRecoilCallback(
@@ -56,7 +56,7 @@ export default function Canvas(props) {
   );
 
   const onDragEnd = function (result) {
-    const { source, destination, draggableId } = result;
+    const { source, destination } = result;
     if (
       !destination ||
       (source.droppableId === destination.droppableId &&

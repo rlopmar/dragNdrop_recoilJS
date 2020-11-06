@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Droppable } from "react-beautiful-dnd";
-import { useRecoilValue, useRecoilState, useRecoilCallback } from "recoil";
+import { useRecoilValue, useRecoilCallback } from "recoil";
 
 import { columnState, taskState, taskIdsState } from "../globalState";
 import { Task, Button } from "../components";
@@ -34,7 +34,7 @@ const StyledTaskList = styled.div`
 `;
 
 export default function Column(props) {
-  const [column, setColumn] = useRecoilState(columnState(props.id));
+  const column = useRecoilValue(columnState(props.id));
   const taskIds = useRecoilValue(taskIdsState);
   const task = useRecoilValue(taskState());
 
