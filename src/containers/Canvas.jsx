@@ -8,6 +8,9 @@ import { Column } from "../components";
 const StyledContainer = styled.div`
   padding: 10px;
   display: flex;
+  flex-direction: ${(props) => {
+    return props.width > 500 ? "row" : "column";
+  }};
 `;
 
 export default function Canvas() {
@@ -86,18 +89,28 @@ export default function Canvas() {
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="all-columns" direction="horizontal" type="column">
+      <Droppable
+        droppableId="all-columns"
+        direction={window.innerWidth > 500 ? "horizontal" : "vertical"}
+        type="column"
+      >
         {(provided) => (
-          <StyledContainer {...provided.droppableProps} ref={provided.innerRef}>
-            {columnIds.map((columnId, index) => {
-              return (
-                <Column key={columnId} id={columnId} index={index}></Column>
-              );
-            })}
+          <StyledContainer
+            width={window.innerWidth}
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+          >
+            <ColumnList columnIds={columnIds}></ColumnList>
             {provided.placeholder}
           </StyledContainer>
         )}
       </Droppable>
     </DragDropContext>
   );
+}
+
+function ColumnList(props) {
+  return props.columnIds.map((columnId, index) => {
+    return <Column key={columnId} id={columnId} index={index}></Column>;
+  });
 }
