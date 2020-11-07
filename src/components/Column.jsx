@@ -1,3 +1,4 @@
+import React from "react";
 import styled from "styled-components";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import { useRecoilValue, useRecoilCallback } from "recoil";
@@ -30,9 +31,12 @@ const StyledColumnTitle = styled.h2`
 
 const StyledTaskList = styled.div`
   padding: 8px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 `;
 
-export default function Column(props) {
+const Column = React.memo((props) => {
   const column = useRecoilValue(columnState(props.id));
   const taskIds = useRecoilValue(taskIdsState);
   const task = useRecoilValue(taskState());
@@ -77,9 +81,7 @@ export default function Column(props) {
                 ref={provided.innerRef}
                 {...provided.droppableProps}
               >
-                {column.tasksOrder.map((taskId, index) => {
-                  return <Task key={taskId} id={taskId} index={index}></Task>;
-                })}
+                <TaskList tasksOrder={column.tasksOrder}></TaskList>
                 {provided.placeholder}
               </StyledTaskList>
             )}
@@ -88,4 +90,16 @@ export default function Column(props) {
       )}
     </Draggable>
   );
-}
+});
+
+const TaskList = React.memo((props) => {
+  return (
+    <StyledTaskList>
+      {props.tasksOrder.map((taskId, index) => {
+        return <Task key={taskId} id={taskId} index={index}></Task>;
+      })}
+    </StyledTaskList>
+  );
+});
+
+export default Column;

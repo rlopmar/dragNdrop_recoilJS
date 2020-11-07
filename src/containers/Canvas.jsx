@@ -1,3 +1,4 @@
+import React from "react";
 import styled from "styled-components";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { useRecoilValue, useRecoilCallback } from "recoil";
@@ -5,13 +6,13 @@ import { useRecoilValue, useRecoilCallback } from "recoil";
 import { columnIdsState, columnState } from "../globalState";
 import { Column } from "../components";
 
-const StyledContainer = styled.div`
+const StyledContainer = React.memo(styled.div`
   padding: 10px;
   display: flex;
   flex-direction: ${(props) => {
     return props.width > 500 ? "row" : "column";
   }};
-`;
+`);
 
 export default function Canvas() {
   const columnIds = useRecoilValue(columnIdsState);
@@ -109,8 +110,8 @@ export default function Canvas() {
   );
 }
 
-function ColumnList(props) {
+const ColumnList = React.memo((props) => {
   return props.columnIds.map((columnId, index) => {
     return <Column key={columnId} id={columnId} index={index}></Column>;
   });
-}
+});

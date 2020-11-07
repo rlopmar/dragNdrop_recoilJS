@@ -1,3 +1,4 @@
+import React from "react";
 import styled from "styled-components";
 import { Draggable } from "react-beautiful-dnd";
 import { useRecoilValue } from "recoil";
@@ -12,7 +13,7 @@ const StyledTask = styled.div`
   margin-bottom: 8px;
 `;
 
-export default function Task(props) {
+const Task = React.memo((props) => {
   const task = useRecoilValue(taskState(props.id));
 
   return (
@@ -31,4 +32,6 @@ export default function Task(props) {
       }}
     </Draggable>
   );
-}
+});
+
+export default Task;

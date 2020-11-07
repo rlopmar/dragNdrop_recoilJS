@@ -1,3 +1,4 @@
+import React from "react";
 import styled from "styled-components";
 import { useRecoilValue, useRecoilCallback } from "recoil";
 import { columnIdsState, columnState } from "../globalState";
@@ -11,7 +12,7 @@ const StyledHeaderMenu = styled.div`
   background-color: #dcdcdc;
 `;
 
-export default function HeaderBar() {
+const HeaderBar = React.memo((props) => {
   const columnIds = useRecoilValue(columnIdsState);
   const column = useRecoilValue(columnState());
 
@@ -38,4 +39,6 @@ export default function HeaderBar() {
       <Button onClick={onAddColumn}>Add Column</Button>
     </StyledHeaderMenu>
   );
-}
+});
+
+export default HeaderBar;
