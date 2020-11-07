@@ -101,7 +101,11 @@ export default function Canvas() {
             {...provided.droppableProps}
             ref={provided.innerRef}
           >
-            <ColumnList columnIds={columnIds}></ColumnList>
+            {columnIds.map((columnId, index) => {
+              return (
+                <Column key={columnId} id={columnId} index={index}></Column>
+              );
+            })}
             {provided.placeholder}
           </StyledContainer>
         )}
@@ -109,9 +113,3 @@ export default function Canvas() {
     </DragDropContext>
   );
 }
-
-const ColumnList = React.memo((props) => {
-  return props.columnIds.map((columnId, index) => {
-    return <Column key={columnId} id={columnId} index={index}></Column>;
-  });
-});
