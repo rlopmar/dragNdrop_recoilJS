@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Droppable } from "react-beautiful-dnd";
+import { Droppable, Draggable } from "react-beautiful-dnd";
 import { useRecoilValue, useRecoilCallback } from "recoil";
 
 import { columnState, taskState, taskIdsState } from "../globalState";
@@ -8,9 +8,8 @@ import { Task, Button } from "../components";
 const StyledColumnContainer = styled.div`
   border: 1px solid black;
   border-radius: 5px;
-  min-height: 50px;
-  min-width: 200px;
-  margin-bottom: 10px;
+  min-width: 250px;
+  margin: 5px;
   display: flex;
   flex-direction: column;
 `;
@@ -62,21 +61,31 @@ export default function Column(props) {
   };
 
   return (
-    <StyledColumnContainer>
-      <StyledColumnHeader>
-        <StyledColumnTitle>{column.title}</StyledColumnTitle>
-        <Button onClick={onAddTask}>Add Task</Button>
-      </StyledColumnHeader>
-      <Droppable droppableId={column.id}>
-        {(provided) => (
-          <StyledTaskList ref={provided.innerRef} {...provided.droppableProps}>
-            {column.tasksOrder.map((taskId, index) => {
-              return <Task key={taskId} id={taskId} index={index}></Task>;
-            })}
-            {provided.placeholder}
-          </StyledTaskList>
-        )}
-      </Droppable>
-    </StyledColumnContainer>
+    <Draggable draggableId={column.id} index={props.index}>
+      {(provided) => (
+        <StyledColumnContainer
+          {...provided.draggableProps}
+          ref={provided.innerRef}
+        >
+          <StyledColumnHeader {...provided.dragHandleProps}>
+            <StyledColumnTitle>{column.title}</StyledColumnTitle>
+            <Button onClick={onAddTask}>Add Task</Button>
+          </StyledColumnHeader>
+          <Droppable droppableId={column.id} type="task">
+            {(provided) => (
+              <StyledTaskList
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+              >
+                {column.tasksOrder.map((taskId, index) => {
+                  return <Task key={taskId} id={taskId} index={index}></Task>;
+                })}
+                {provided.placeholder}
+              </StyledTaskList>
+            )}
+          </Droppable>
+        </StyledColumnContainer>
+      )}
+    </Draggable>
   );
 }

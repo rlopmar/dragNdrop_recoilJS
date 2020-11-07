@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { DragDropContext } from "react-beautiful-dnd";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { useRecoilValue, useRecoilCallback } from "recoil";
 
 import { columnIdsState, columnState } from "../globalState";
@@ -7,12 +7,13 @@ import { Column } from "../components";
 
 const StyledContainer = styled.div`
   padding: 10px;
+  display: flex;
 `;
 
 export default function Canvas() {
   const columnIds = useRecoilValue(columnIdsState);
 
-  const updateDraggedItems = useRecoilCallback(
+  const updateDraggedTasks = useRecoilCallback(
     ({ snapshot, set }) => async (result) => {
       const { source, destination, draggableId } = result;
       const sourceColumn = await snapshot.getPromise(
@@ -55,8 +56,20 @@ export default function Canvas() {
     []
   );
 
+  const updateDraggedColumns = useRecoilCallback(
+    ({ snapshot, set }) => async (result) => {
+      const { source, destination, draggableId } = result;
+      const columnsOrder = await snapshot.getPromise(columnIdsState);
+      const newColumnsOrder = [...columnsOrder];
+      newColumnsOrder.splice(source.index, 1);
+      newColumnsOrder.splice(destination.index, 0, draggableId);
+      set(columnIdsState, newColumnsOrder);
+    },
+    []
+  );
+
   const onDragEnd = function (result) {
-    const { source, destination } = result;
+    const { source, destination, type } = result;
     if (
       !destination ||
       (source.droppableId === destination.droppableId &&
@@ -64,16 +77,27 @@ export default function Canvas() {
     ) {
       return;
     }
-    updateDraggedItems(result);
+    if (type === "column") {
+      updateDraggedColumns(result);
+      return;
+    }
+    updateDraggedTasks(result);
   };
 
   return (
-    <StyledContainer>
-      <DragDropContext onDragEnd={onDragEnd}>
-        {columnIds.map((columnId) => {
-          return <Column key={columnId} id={columnId}></Column>;
-        })}
-      </DragDropContext>
-    </StyledContainer>
+    <DragDropContext onDragEnd={onDragEnd}>
+      <Droppable droppableId="all-columns" direction="horizontal" type="column">
+        {(provided) => (
+          <StyledContainer {...provided.droppableProps} ref={provided.innerRef}>
+            {columnIds.map((columnId, index) => {
+              return (
+                <Column key={columnId} id={columnId} index={index}></Column>
+              );
+            })}
+            {provided.placeholder}
+          </StyledContainer>
+        )}
+      </Droppable>
+    </DragDropContext>
   );
 }
