@@ -3,7 +3,12 @@ import styled from "styled-components";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import { useRecoilValue, useRecoilCallback } from "recoil";
 
-import { columnState, taskState, taskIdsState } from "../globalState";
+import {
+  columnState,
+  taskState,
+  taskIdsState,
+  columnIdsState,
+} from "../globalState";
 import { Task, Button } from "../components";
 
 const StyledColumnContainer = styled.div`
@@ -40,6 +45,8 @@ const Column = React.memo((props) => {
   const column = useRecoilValue(columnState(props.id));
   const taskIds = useRecoilValue(taskIdsState);
   const task = useRecoilValue(taskState());
+  const columnIds = useRecoilValue(columnIdsState);
+  const columnIndex = columnIds.indexOf(props.id);
 
   const saveNewTask = useRecoilCallback(
     ({ snapshot, set }) => async (taskId, task) => {
@@ -65,7 +72,7 @@ const Column = React.memo((props) => {
   };
 
   return (
-    <Draggable draggableId={column.id} index={props.index}>
+    <Draggable draggableId={column.id} index={columnIndex}>
       {(provided) => (
         <StyledColumnContainer
           {...provided.draggableProps}
@@ -81,7 +88,9 @@ const Column = React.memo((props) => {
                 ref={provided.innerRef}
                 {...provided.droppableProps}
               >
-                <TaskList tasksOrder={column.tasksOrder}></TaskList>
+                {column.tasksOrder.map((taskId, index) => {
+                  return <Task key={taskId} id={taskId} index={index}></Task>;
+                })}
                 {provided.placeholder}
               </StyledTaskList>
             )}
@@ -89,16 +98,6 @@ const Column = React.memo((props) => {
         </StyledColumnContainer>
       )}
     </Draggable>
-  );
-});
-
-const TaskList = React.memo((props) => {
-  return (
-    <StyledTaskList>
-      {props.tasksOrder.map((taskId, index) => {
-        return <Task key={taskId} id={taskId} index={index}></Task>;
-      })}
-    </StyledTaskList>
   );
 });
 

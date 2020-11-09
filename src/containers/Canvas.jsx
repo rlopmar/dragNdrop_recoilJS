@@ -101,10 +101,8 @@ export default function Canvas() {
             {...provided.droppableProps}
             ref={provided.innerRef}
           >
-            {columnIds.map((columnId, index) => {
-              return (
-                <Column key={columnId} id={columnId} index={index}></Column>
-              );
+            {columnIds.map((columnId) => {
+              return <Column key={columnId} id={columnId}></Column>;
             })}
             {provided.placeholder}
           </StyledContainer>
